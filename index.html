@@ -337,7 +337,22 @@ html, body {
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
-const INCIDENTS_PATH = "../data/clean/incidents.json";
+async function loadIncidents() {
+  const parts = [
+    "data/clean/incidents_part0.json",
+    "data/clean/incidents_part1.json"
+  ];
+
+  let all = [];
+
+  for (const path of parts) {
+    const res = await fetch(path);
+    const chunk = await res.json();
+    all.push(...chunk);
+  }
+
+  return all;
+}
 const SUMMARY_PATH   = "../data/clean/summary.json";
 
 // Attack-type colour palette (vintage ink tones)
@@ -369,11 +384,12 @@ function fmtNum(n) {
 
 // ── MAIN ──────────────────────────────────────────────────────────────────────
 async function init() {
-  const [worldTopo, incidents, summary] = await Promise.all([
+  const [worldTopo, summary] = await Promise.all([
     d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"),
-    d3.json(INCIDENTS_PATH),
+    //d3.json(INCIDENTS_PATH),
     d3.json(SUMMARY_PATH),
   ]);
+  const incidents = await loadIncidents();  
 
   document.getElementById("loading").style.display = "none";
 
