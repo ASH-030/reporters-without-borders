@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporters Without Borders — The World Tour</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=UnifrakturMaguntia&family=Special+Elite&display=swap" rel="stylesheet">
+
+<!-- D3 + TopoJSON -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:      #1a0e04;
+  --paper:    #f0e2c0;
+  --paper2:   #e6d4a8;
+  --sepia:    #7a5c2e;
+  --rust:     #6b2f12;
+  --gold:     #c49a22;
+  --faded:    #a8896a;
+  --cream:    #f8f0da;
+}
+
+html, body {
+  min-height: 100vh;
+  background: #1a0e04;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 16px 60px;
+  font-family: 'Special Elite', 'Courier New', monospace;
+}
+
+/* ── POSTER SHELL ── */
+.poster {
+  width: 100%;
+  max-width: 1060px;
+  background: var(--paper);
+  position: relative;
+  padding: 44px 52px 52px;
+  /* layered shadows for aged paper feel */
+  box-shadow:
+    0 0 0 3px var(--rust),
+    0 0 0 8px var(--paper2),
+    0 0 0 11px var(--sepia),
+    12px 12px 60px rgba(0,0,0,0.7),
+    inset 0 0 120px rgba(120,80,20,0.08);
+  /* paper grain via SVG filter */
+  filter: contrast(1.02);
+}
+
+/* corner ornaments */
+.poster::before, .poster::after,
+.c-bl, .c-br {
+  content: '';
+  position: absolute;
+  width: 56px; height: 56px;
+  border-color: var(--rust);
+  border-style: solid;
+  pointer-events: none;
+}
+.poster::before { top: 14px; left: 14px;  border-width: 3px 0 0 3px; }
+.poster::after  { top: 14px; right: 14px; border-width: 3px 3px 0 0; }
+.c-bl { bottom: 14px; left: 14px;  border-width: 0 0 3px 3px; }
+.c-br { bottom: 14px; right: 14px; border-width: 0 3px 3px 0; }
+
+/* inner corner dots */
+.poster::before { outline: 3px solid transparent; }
+
+/* ── TYPOGRAPHY ── */
+.eyebrow {
+  text-align: center;
+  font-size: 10.5px;
+  letter-spacing: 7px;
+  color: var(--sepia);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.band-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(56px, 8.5vw, 96px);
+  font-weight: 900;
+  text-align: center;
+  line-height: 0.9;
+  color: var(--ink);
+  letter-spacing: -2px;
+}
+.band-name-sub {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(18px, 3vw, 30px);
+  font-weight: 400;
+  font-style: italic;
+  text-align: center;
+  letter-spacing: 10px;
+  color: var(--rust);
+  margin-top: 6px;
+}
+
+/* ── DIVIDERS ── */
+.div-heavy {
+  border: none;
+  height: 3px;
+  background: linear-gradient(to right, transparent 0%, var(--rust) 12%, var(--rust) 88%, transparent 100%);
+  margin: 10px 0;
+}
+.div-thin {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent 0%, var(--sepia) 15%, var(--sepia) 85%, transparent 100%);
+  margin: 6px 0;
+}
+.div-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 6px 0;
+  color: var(--gold);
+  font-size: 18px;
+}
+.div-ornament::before,
+.div-ornament::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold));
+}
+.div-ornament::after {
+  background: linear-gradient(to left, transparent, var(--gold));
+}
+
+/* ── TOUR TITLE ── */
+.tour-title {
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(14px, 2.2vw, 22px);
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin: 4px 0;
+}
+
+.subtitle-strip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 10px;
+  letter-spacing: 3.5px;
+  color: var(--sepia);
+  text-transform: uppercase;
+  margin: 4px 0;
+}
+.subtitle-strip .bull { color: var(--gold); font-size: 14px; }
+
+/* ── MAP ── */
+.map-wrap {
+  position: relative;
+  margin: 14px 0 10px;
+  border: 1.5px solid var(--sepia);
+  background: #c8b88a;
+  overflow: visible;
+  line-height: 0;
+}
+#world-map {
+  display: block;
+  width: 100%;
+}
+
+/* ── STAT BOXES ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1.5px solid var(--sepia);
+  margin: 10px 0;
+}
+.stat {
+  padding: 10px 8px 8px;
+  text-align: center;
+  border-right: 1px solid var(--faded);
+}
+.stat:last-child { border-right: none; }
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 3.5vw, 36px);
+  font-weight: 900;
+  color: var(--ink);
+  line-height: 1;
+  display: block;
+}
+.stat-label {
+  font-size: 8.5px;
+  letter-spacing: 2.5px;
+  color: var(--sepia);
+  text-transform: uppercase;
+  margin-top: 3px;
+  display: block;
+}
+
+/* ── DARK BAND ── */
+.dark-band {
+  background: var(--rust);
+  color: var(--cream);
+  text-align: center;
+  font-size: 9.5px;
+  letter-spacing: 5px;
+  padding: 6px 0;
+  margin: 10px -52px;
+  text-transform: uppercase;
+}
+
+/* ── LEGEND + BOTTOM ── */
+.legend-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  margin: 8px 0 4px;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  color: var(--sepia);
+  text-transform: uppercase;
+}
+.leg-item { display: flex; align-items: center; gap: 6px; }
+.leg-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  display: inline-block; flex-shrink: 0;
+}
+
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--faded);
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+/* ── TOOLTIP ── */
+.tooltip {
+  position: fixed;
+  background: var(--ink);
+  color: var(--cream);
+  padding: 10px 14px;
+  font-size: 11px;
+  line-height: 1.5;
+  max-width: 280px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  border: 1px solid var(--gold);
+  font-family: 'Special Elite', monospace;
+  z-index: 9999;
+}
+.tooltip.visible { opacity: 1; }
+.tooltip strong { color: var(--gold); display: block; margin-bottom: 4px; }
+
+/* ── LOADING ── */
+#loading {
+  text-align: center;
+  padding: 60px 0;
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: var(--sepia);
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<div class="poster">
+  <div class="c-bl"></div>
+  <div class="c-br"></div>
+
+  <p class="eyebrow">Presented Without Warning · Press Access Not Guaranteed · Est. 1970</p>
+
+  <h1 class="band-name">Reporters</h1>
+  <p class="band-name-sub">Without Borders</p>
+
+  <hr class="div-heavy">
+
+  <div class="subtitle-strip">
+    <span>No Advance Notice</span>
+    <span class="bull">✦</span>
+    <span>All Shows Unannounced</span>
+    <span class="bull">✦</span>
+    <span>No Refunds Issued</span>
+    <span class="bull">✦</span>
+    <span>Attendance At Your Own Risk</span>
+  </div>
+
+  <hr class="div-thin">
+
+  <p class="tour-title" id="tour-year-range">The World Tour · Loading…</p>
+
+  <div class="map-wrap">
+    <div id="loading">Setting the stage…</div>
+    <svg id="world-map" viewBox="0 0 960 500"></svg>
+  </div>
+
+  <div class="legend-row" id="legend"></div>
+
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat"><span class="stat-num" id="s-incidents">—</span><span class="stat-label">Tour Stops</span></div>
+    <div class="stat"><span class="stat-num" id="s-killed">—</span><span class="stat-label">Casualties</span></div>
+    <div class="stat"><span class="stat-num" id="s-countries">—</span><span class="stat-label">Countries</span></div>
+    <div class="stat"><span class="stat-num" id="s-years">—</span><span class="stat-label">Years on Road</span></div>
+  </div>
+
+  <div class="dark-band">
+    Setlist: Bombings · Assassinations · Kidnappings · Armed Assaults · Facility Attacks · And More
+  </div>
+
+  <div class="div-ornament">✦✦✦</div>
+
+  <div class="bottom-row">
+    <span>Source: Global Terrorism Database (START, Univ. of Maryland)</span>
+    <span>Data Day: Reporters Without Borders</span>
+  </div>
+
+</div><!-- /poster -->
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const INCIDENTS_PATH = "../data/clean/incidents.json";
+const SUMMARY_PATH   = "../data/clean/summary.json";
+
+// Attack-type colour palette (vintage ink tones)
+const ATTACK_COLORS = {
+  "Bombing/Explosion":          "#8b3a0f",
+  "Armed Assault":              "#4a2010",
+  "Assassination":              "#6b1a1a",
+  "Hostage Taking (Kidnapping)":"#1a3a2a",
+  "Facility/Infrastructure Attack": "#2a3a5a",
+  "Hijacking":                  "#3a1a5a",
+  "Hostage Taking (Barricade Incident)": "#4a3a00",
+  "Unarmed Assault":            "#3a3a0f",
+  "Unknown":                    "#5c4a2a",
+  "Other":                      "#5c4a2a",
+};
+
+function attackColor(type) {
+  for (const [key, val] of Object.entries(ATTACK_COLORS)) {
+    if (type && type.toLowerCase().includes(key.toLowerCase().split("/")[0])) return val;
+  }
+  return ATTACK_COLORS["Other"];
+}
+
+function fmtNum(n) {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+  if (n >= 1_000)     return Math.round(n / 1_000) + "K";
+  return n.toLocaleString();
+}
+
+// ── MAIN ──────────────────────────────────────────────────────────────────────
+async function init() {
+  const [worldTopo, incidents, summary] = await Promise.all([
+    d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"),
+    d3.json(INCIDENTS_PATH),
+    d3.json(SUMMARY_PATH),
+  ]);
+
+  document.getElementById("loading").style.display = "none";
+
+  populateStats(summary);
+  drawMap(worldTopo, incidents);
+  drawLegend();
+}
+
+function populateStats(s) {
+  document.getElementById("tour-year-range").textContent =
+    `The World Tour · ${s.year_min} – ${s.year_max}`;
+  document.getElementById("s-incidents").textContent = fmtNum(s.total_incidents);
+  document.getElementById("s-killed").textContent    = fmtNum(s.total_killed + s.total_wounded);
+  document.getElementById("s-countries").textContent = s.countries;
+  document.getElementById("s-years").textContent     = s.year_max - s.year_min + 1;
+}
+
+function drawMap(world, incidents) {
+  const svg    = d3.select("#world-map");
+  const width  = 960;
+  const height = 500;
+
+  const projection = d3.geoNaturalEarth1()
+    .scale(153)
+    .translate([width / 2, height / 2]);
+
+  const path = d3.geoPath().projection(projection);
+
+  const land = topojson.feature(world, world.objects.countries);
+  const borders = topojson.mesh(world, world.objects.countries, (a, b) => a !== b);
+
+  // Ocean
+  svg.append("rect")
+    .attr("width", width).attr("height", height)
+    .attr("fill", "#a89060");
+
+  // Land
+  svg.selectAll(".country")
+    .data(land.features)
+    .join("path")
+    .attr("class", "country")
+    .attr("d", path)
+    .attr("fill", "#c8b070")
+    .attr("stroke", "#7a5a28")
+    .attr("stroke-width", 0.4);
+
+  // Country borders
+  svg.append("path")
+    .datum(borders)
+    .attr("fill", "none")
+    .attr("stroke", "#7a5a28")
+    .attr("stroke-width", 0.3)
+    .attr("d", path);
+
+  // Dot radius scale based on magnitude
+  const rScale = d3.scaleSqrt()
+    .domain([1, d3.max(incidents, d => d.magnitude || 1)])
+    .range([1, 9])
+    .clamp(true);
+
+  // Shuffle so small dots aren't always behind big ones
+  const shuffled = [...incidents].sort(() => Math.random() - 0.5);
+
+  const tooltip = document.getElementById("tooltip");
+
+  svg.selectAll(".incident")
+    .data(shuffled)
+    .join("circle")
+    .attr("class", "incident")
+    .attr("cx", d => {
+      const p = projection([d.lon, d.lat]);
+      return p ? p[0] : null;
+    })
+    .attr("cy", d => {
+      const p = projection([d.lon, d.lat]);
+      return p ? p[1] : null;
+    })
+    .attr("r", d => rScale(d.magnitude || 1))
+    .attr("fill", d => attackColor(d.attack_type))
+    .attr("fill-opacity", 0.72)
+    .attr("stroke", "#f0e2c0")
+    .attr("stroke-width", 0.25)
+    .filter(d => {
+      const p = projection([d.lon, d.lat]);
+      return p !== null;
+    })
+    .on("mousemove", function(event, d) {
+      const casualties = (d.killed || 0) + (d.wounded || 0);
+      tooltip.innerHTML = `
+        <strong>${d.country || "Unknown"}, ${d.year || "?"}</strong>
+        ${d.city && d.city !== "Unknown" ? `<em>${d.city}</em><br>` : ""}
+        Type: ${d.attack_type || "Unknown"}<br>
+        Group: ${d.group || "Unknown"}<br>
+        ${casualties > 0 ? `Casualties: ${casualties}<br>` : ""}
+        ${d.summary ? d.summary.slice(0, 180) + (d.summary.length > 180 ? "…" : "") : ""}
+      `;
+      tooltip.classList.add("visible");
+      tooltip.style.left = (event.clientX + 14) + "px";
+      tooltip.style.top  = (event.clientY - 12) + "px";
+    })
+    .on("mouseleave", () => tooltip.classList.remove("visible"));
+
+  // Faint aged paper overlay
+  svg.append("rect")
+    .attr("width", width).attr("height", height)
+    .attr("fill", "url(#paper-grain)")
+    .attr("pointer-events", "none")
+    .attr("opacity", 0.04);
+}
+
+function drawLegend() {
+  const container = document.getElementById("legend");
+  const items = [
+    { label: "Bombing",      color: ATTACK_COLORS["Bombing/Explosion"] },
+    { label: "Armed Assault",color: ATTACK_COLORS["Armed Assault"] },
+    { label: "Assassination",color: ATTACK_COLORS["Assassination"] },
+    { label: "Kidnapping",   color: ATTACK_COLORS["Hostage Taking (Kidnapping)"] },
+    { label: "Facility Attack",color: ATTACK_COLORS["Facility/Infrastructure Attack"] },
+    { label: "Other",        color: ATTACK_COLORS["Other"] },
+  ];
+  items.forEach(item => {
+    const wrap = document.createElement("span");
+    wrap.className = "leg-item";
+    wrap.innerHTML = `<span class="leg-dot" style="background:${item.color}"></span>${item.label}`;
+    container.appendChild(wrap);
+  });
+}
+
+// ── RUN ───────────────────────────────────────────────────────────────────────
+init().catch(err => {
+  console.error(err);
+  document.getElementById("loading").textContent =
+    "Could not load data. Check that data/clean/incidents.json exists.";
+});
+</script>
+
+</body>
+</html>
