@@ -1,0 +1,324 @@
+{
+  "total_incidents": 86151,
+  "total_killed": 187650,
+  "total_wounded": 257974,
+  "countries": 201,
+  "year_min": 1970,
+  "year_max": 2008,
+  "by_year": [
+    {
+      "year": 1970,
+      "incidents": 643
+    },
+    {
+      "year": 1971,
+      "incidents": 463
+    },
+    {
+      "year": 1972,
+      "incidents": 550
+    },
+    {
+      "year": 1973,
+      "incidents": 465
+    },
+    {
+      "year": 1974,
+      "incidents": 577
+    },
+    {
+      "year": 1975,
+      "incidents": 727
+    },
+    {
+      "year": 1976,
+      "incidents": 900
+    },
+    {
+      "year": 1977,
+      "incidents": 1292
+    },
+    {
+      "year": 1978,
+      "incidents": 1455
+    },
+    {
+      "year": 1979,
+      "incidents": 2533
+    },
+    {
+      "year": 1980,
+      "incidents": 2560
+    },
+    {
+      "year": 1981,
+      "incidents": 2469
+    },
+    {
+      "year": 1982,
+      "incidents": 2407
+    },
+    {
+      "year": 1983,
+      "incidents": 2670
+    },
+    {
+      "year": 1984,
+      "incidents": 3198
+    },
+    {
+      "year": 1985,
+      "incidents": 2679
+    },
+    {
+      "year": 1986,
+      "incidents": 2680
+    },
+    {
+      "year": 1987,
+      "incidents": 2989
+    },
+    {
+      "year": 1988,
+      "incidents": 3470
+    },
+    {
+      "year": 1989,
+      "incidents": 4147
+    },
+    {
+      "year": 1990,
+      "incidents": 3647
+    },
+    {
+      "year": 1991,
+      "incidents": 4407
+    },
+    {
+      "year": 1992,
+      "incidents": 4832
+    },
+    {
+      "year": 1994,
+      "incidents": 3295
+    },
+    {
+      "year": 1995,
+      "incidents": 2920
+    },
+    {
+      "year": 1996,
+      "incidents": 2909
+    },
+    {
+      "year": 1997,
+      "incidents": 2997
+    },
+    {
+      "year": 1998,
+      "incidents": 891
+    },
+    {
+      "year": 1999,
+      "incidents": 1342
+    },
+    {
+      "year": 2000,
+      "incidents": 1781
+    },
+    {
+      "year": 2001,
+      "incidents": 1889
+    },
+    {
+      "year": 2002,
+      "incidents": 1308
+    },
+    {
+      "year": 2003,
+      "incidents": 1265
+    },
+    {
+      "year": 2004,
+      "incidents": 1135
+    },
+    {
+      "year": 2005,
+      "incidents": 1985
+    },
+    {
+      "year": 2006,
+      "incidents": 2715
+    },
+    {
+      "year": 2007,
+      "incidents": 3207
+    },
+    {
+      "year": 2008,
+      "incidents": 4752
+    }
+  ],
+  "by_region": [
+    {
+      "region": "3",
+      "incidents": 16622,
+      "killed": 25141
+    },
+    {
+      "region": "10",
+      "incidents": 15495,
+      "killed": 43711
+    },
+    {
+      "region": "8",
+      "incidents": 14508,
+      "killed": 5961
+    },
+    {
+      "region": "6",
+      "incidents": 13465,
+      "killed": 42841
+    },
+    {
+      "region": "2",
+      "incidents": 9306,
+      "killed": 24513
+    },
+    {
+      "region": "11",
+      "incidents": 5507,
+      "killed": 27071
+    },
+    {
+      "region": "5",
+      "incidents": 4557,
+      "killed": 8546
+    },
+    {
+      "region": "1",
+      "incidents": 3080,
+      "killed": 4542
+    },
+    {
+      "region": "9",
+      "incidents": 2272,
+      "killed": 4002
+    },
+    {
+      "region": "4",
+      "incidents": 676,
+      "killed": 353
+    },
+    {
+      "region": "7",
+      "incidents": 438,
+      "killed": 830
+    },
+    {
+      "region": "12",
+      "incidents": 225,
+      "killed": 139
+    }
+  ],
+  "by_attack_type": [
+    {
+      "attack_type": "Bombing/Explosion",
+      "incidents": 39022
+    },
+    {
+      "attack_type": "Armed Assault",
+      "incidents": 20013
+    },
+    {
+      "attack_type": "Assassination",
+      "incidents": 13110
+    },
+    {
+      "attack_type": "Facility/Infrastructure Attack",
+      "incidents": 5525
+    },
+    {
+      "attack_type": "Hostage Taking (Kidnapping)",
+      "incidents": 4175
+    },
+    {
+      "attack_type": "Unknown",
+      "incidents": 2758
+    },
+    {
+      "attack_type": "Hostage Taking (Barricade Incident)",
+      "incidents": 636
+    },
+    {
+      "attack_type": "Unarmed Assault",
+      "incidents": 535
+    },
+    {
+      "attack_type": "Hijacking",
+      "incidents": 377
+    }
+  ],
+  "top_groups": [
+    {
+      "group": "Shining Path (SL)",
+      "incidents": 4266
+    },
+    {
+      "group": "Farabundo Marti National Liberation Front (FMLN)",
+      "incidents": 2991
+    },
+    {
+      "group": "Irish Republican Army (IRA)",
+      "incidents": 2660
+    },
+    {
+      "group": "Basque Fatherland and Freedom (ETA)",
+      "incidents": 1977
+    },
+    {
+      "group": "Revolutionary Armed Forces of Colombia (FARC)",
+      "incidents": 1587
+    },
+    {
+      "group": "Liberation Tigers of Tamil Eelam (LTTE)",
+      "incidents": 1522
+    },
+    {
+      "group": "National Liberation Army of Colombia (ELN)",
+      "incidents": 1175
+    },
+    {
+      "group": "Palestinians",
+      "incidents": 1082
+    },
+    {
+      "group": "Kurdistan Workers' Party (PKK)",
+      "incidents": 1059
+    },
+    {
+      "group": "New People's Army (NPA)",
+      "incidents": 905
+    },
+    {
+      "group": "Taliban",
+      "incidents": 868
+    },
+    {
+      "group": "Manuel Rodriguez Patriotic Front (FPMR)",
+      "incidents": 812
+    },
+    {
+      "group": "Nicaraguan Democratic Force (FDN)",
+      "incidents": 677
+    },
+    {
+      "group": "Sikh Extremists",
+      "incidents": 673
+    },
+    {
+      "group": "African National Congress (South Africa)",
+      "incidents": 575
+    }
+  ]
+}
